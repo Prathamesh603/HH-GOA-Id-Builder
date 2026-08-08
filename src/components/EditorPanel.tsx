@@ -182,6 +182,38 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({ data, onChange, onRand
               />
             </div>
           </div>
+
+          {/* Bounty — only shown for One Piece (glass) template */}
+          {data.template === 'glass' && (
+            <div
+              style={{
+                padding: '12px 14px',
+                borderRadius: '12px',
+                border: '1.5px solid rgba(233,198,124,0.45)',
+                background: 'rgba(233,198,124,0.06)',
+              }}
+            >
+              <label className="text-xs font-bold" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', color: '#E9C67C' }}>
+                <span>🏴‍☠️</span>
+                <span>BOUNTY AMOUNT (BERRIES ₿)</span>
+              </label>
+              <input
+                type="text"
+                value={data.bounty ?? ''}
+                onChange={(e) => onChange({ bounty: e.target.value })}
+                placeholder="e.g. 3,000,000,000"
+                className="input-tech font-mono font-extrabold"
+                style={{
+                  letterSpacing: '1px',
+                  color: '#E9C67C',
+                  fontSize: '1.05rem',
+                }}
+              />
+              <p className="text-xs" style={{ marginTop: '6px', color: 'rgba(255,255,255,0.4)' }}>
+                Appears on the Wanted poster. Leave empty to auto-calculate.
+              </p>
+            </div>
+          )}
         </div>
       )}
 

@@ -11,7 +11,7 @@ interface GlassPassTemplateProps {
 export const GlassPassTemplate: React.FC<GlassPassTemplateProps> = ({ data, cardRef }) => {
   const { fullName, role, builderClass, shipping, builderId, beachBag, socialHandle, avatarUrl, avatarScale, avatarOffsetX, avatarOffsetY, avatarFilter } = data;
   const qrValue = socialHandle.startsWith('http') ? socialHandle : `https://x.com/${socialHandle.replace('@', '')}`;
-  const bounty = `${(Math.max(12, (fullName || 'GOA').length) * 3).toLocaleString('en-IN')},000`;
+  const bounty = data.bounty || `${(Math.max(12, (fullName || 'GOA').length) * 3).toLocaleString('en-IN')},000`;
   const ink = '#1e1713';
 
   return (

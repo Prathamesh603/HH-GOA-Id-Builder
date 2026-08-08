@@ -1,10 +1,13 @@
 import React, { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { RetroBadgeTemplate } from './Templates/RetroBadgeTemplate';
 import { DarkPosterTemplate } from './Templates/DarkPosterTemplate';
 import { GlassPassTemplate } from './Templates/GlassPassTemplate';
 import { TrainExpressTemplate } from './Templates/TrainExpressTemplate';
 import type { BuilderBadgeData, CardTemplate } from '../types';
-import { Sparkles, Download, Share2 } from 'lucide-react';
+import { Sparkles, Download, Share2, Film } from 'lucide-react';
+import { toPng } from 'html-to-image';
+import { AnimationOverlay } from './AnimationOverlay';
 
 interface CardPreviewProps {
   data: BuilderBadgeData;
@@ -36,6 +39,35 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
   const [isTiltEnabled, setIsTiltEnabled] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [isAnimatingOpen, setIsAnimatingOpen] = useState(false);
+  const [animationImage, setAnimationImage] = useState<string | null>(null);
+  const [initialCardRect, setInitialCardRect] = useState<DOMRect | null>(null);
+  const [isCapturingForAnimation, setIsCapturingForAnimation] = useState(false);
+
+  const handleAnimateClick = async () => {
+    if (!cardRef.current) return;
+    setIsCapturingForAnimation(true);
+    try {
+      const rect = cardRef.current.getBoundingClientRect();
+      setInitialCardRect(rect);
+
+      const dataUrl = await toPng(cardRef.current, {
+        pixelRatio: 3,
+        quality: 0.95,
+        cacheBust: true,
+        filter: (node) => !(node instanceof HTMLElement && node.classList.contains('card-glare')),
+      });
+
+      setAnimationImage(dataUrl);
+      setIsAnimatingOpen(true);
+    } catch (error) {
+      console.error('Failed to capture card for animation:', error);
+      alert('Failed to initialize animation. Please try again.');
+    } finally {
+      setIsCapturingForAnimation(false);
+    }
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isTiltEnabled || !containerRef.current) return;
@@ -209,6 +241,33 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
           <span>{isExporting ? 'Preparing card...' : 'Share Card to X'}</span>
         </button>
 
+        {/* Animate button */}
+        <button
+          onClick={handleAnimateClick}
+          disabled={isExporting || isCapturingForAnimation}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '14px 20px',
+            backgroundColor: '#036737',
+            color: '#FFFFFF',
+            fontWeight: 800,
+            fontSize: '14px',
+            fontFamily: 'Outfit, sans-serif',
+            borderRadius: '12px',
+            cursor: (isExporting || isCapturingForAnimation) ? 'not-allowed' : 'pointer',
+            opacity: (isExporting || isCapturingForAnimation) ? 0.7 : 1,
+            border: '2px solid #036737',
+            boxShadow: '0 4px 16px rgba(3,103,55,0.4)',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <Film style={{ width: '18px', height: '18px' }} />
+          <span>{isCapturingForAnimation ? 'Rendering...' : 'Animate Badge 🎬'}</span>
+        </button>
+
         {/* 3D Tilt toggle button */}
         <button
           onClick={() => setIsTiltEnabled(!isTiltEnabled)}
@@ -234,6 +293,16 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
           <span>3D {isTiltEnabled ? 'ON' : 'OFF'}</span>
         </button>
       </div>
+
+      {isAnimatingOpen && animationImage && createPortal(
+        <AnimationOverlay
+          cardImage={animationImage}
+          initialRect={initialCardRect}
+          onClose={() => setIsAnimatingOpen(false)}
+          fileName={data.fullName || 'builder'}
+        />,
+        document.body
+      )}
     </div>
   );
 };

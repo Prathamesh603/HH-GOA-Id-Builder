@@ -22,4 +22,5 @@ export interface BuilderBadgeData {
   avatarFilter: PhotoFilter;
   template: CardTemplate;
   accentColor: string;
+  bounty?: string;
 }

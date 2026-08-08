@@ -106,29 +106,69 @@ export function App() {
             />
           </div>
         </section>
-
-        {/* Showcase Hype Wall */}
-        <div ref={hypeRef} className="w-full flex justify-center">
-          <HypeWall onSelectPreset={(preset) => handleUpdateData(preset)} />
-        </div>
       </main>
 
-      {/* Big Tech Footer */}
-      <footer className="w-full border-b border-white-10 py-8 px-6 text-xs text-white-50">
-        <div className="max-w-7xl mx-auto flex flex-col md-flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-white">HACKER HOUSE GOA 2026</span>
-            <span>•</span>
-            <span>Made with <Heart className="w-3.5 h-3.5 text-pink inline" /> for Paradise Builders</span>
-          </div>
+      {/* Showcase Hype Wall — above background image */}
+      <div ref={hypeRef} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <HypeWall onSelectPreset={(preset) => handleUpdateData(preset)} />
+      </div>
 
-          <div className="flex items-center gap-6 text-white-60">
-            <a href="https://hhgoa.com" target="_blank" rel="noopener noreferrer" className="hover-text-yellow">hhgoa.com</a>
-            <a href="https://x.com/247pmstudio" target="_blank" rel="noopener noreferrer" className="hover-text-yellow">@247pmstudio</a>
-            <span>#FrameInGoa</span>
+      {/* Full-width Lower Background with Logo + Footer Details */}
+      <div
+        className="lower-bg-section"
+        style={{
+          width: '100%',
+          height: '700px',
+          backgroundImage: 'url(/lower_background.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {/* Centered SVG Logo */}
+        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', marginBottom: '40px' }}>
+          <img src="/hacker_house_goa.svg" alt="Hacker House Goa" style={{ width: '320px', height: 'auto', filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.3))' }} />
+          <div style={{ marginTop: '16px', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.95rem', color: '#FFE500', letterSpacing: '2px' }}>
+            GOA, INDIA &nbsp;•&nbsp; 28 – 31 OCT 2026
+          </div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.85rem', color: 'rgba(255,229,0,0.7)', letterSpacing: '1.5px', marginTop: '4px' }}>
+            2:47 PM STUDIO
           </div>
         </div>
-      </footer>
+
+        {/* Footer Details overlaid */}
+        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', padding: '0 40px', flexWrap: 'wrap', gap: '24px' }}>
+          {/* Left: Social Links */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <a href="https://x.com/247pmstudio" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: '#ffffff', fontSize: '0.95rem', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.5px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFE500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z" /><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" /></svg>
+              @247PMSTUDIO
+            </a>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.5px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFE500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2l-7 20-4-9-9-4 20-7z" /></svg>
+              @TWOFOURTYSEVENPM
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.5px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFE500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+              SATAPATHYPRAVASU@GMAIL.COM
+            </div>
+          </div>
+
+          {/* Right: Links + Copyright */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.5px' }}>BRAND KIT</div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.5px' }}>TERM & CONDITIONS</div>
+            <div style={{ color: '#FFE500', fontSize: '0.9rem', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '1px', marginTop: '8px' }}>
+              © 2026 HH-GOA. ALL RIGHTS RESERVED.
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

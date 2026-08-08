@@ -1,10 +1,24 @@
 import React from 'react';
 import { PRESET_BUILDERS } from '../constants/presets';
 import type { BuilderBadgeData } from '../types';
-import { Flame, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Flame, ArrowRight } from 'lucide-react';
+import { RetroBadgeTemplate } from './Templates/RetroBadgeTemplate';
+import { DarkPosterTemplate } from './Templates/DarkPosterTemplate';
+import { GlassPassTemplate } from './Templates/GlassPassTemplate';
+import { TrainExpressTemplate } from './Templates/TrainExpressTemplate';
 
 interface HypeWallProps {
   onSelectPreset: (presetData: BuilderBadgeData) => void;
+}
+
+function TemplateCard({ data }: { data: BuilderBadgeData }) {
+  switch (data.template) {
+    case 'glass': return <GlassPassTemplate data={data} />;
+    case 'train': return <TrainExpressTemplate data={data} />;
+    case 'retro': return <RetroBadgeTemplate data={data} />;
+    case 'dark':  return <DarkPosterTemplate data={data} />;
+    default:      return null;
+  }
 }
 
 export const HypeWall: React.FC<HypeWallProps> = ({ onSelectPreset }) => {
@@ -15,13 +29,13 @@ export const HypeWall: React.FC<HypeWallProps> = ({ onSelectPreset }) => {
         <div>
           <div className="flex items-center gap-2 text-yellow font-extrabold text-sm tracking-wider uppercase" style={{ marginBottom: '4px' }}>
             <Flame className="w-4 h-4 text-pink" />
-            <span>COMMUNITY HYPE & SHOWCASE</span>
+            <span>COMMUNITY HYPE &amp; SHOWCASE</span>
           </div>
           <h2 className="text-3xl font-black text-white">
             Who's Building in Goa?
           </h2>
           <p className="text-sm text-white-60" style={{ marginTop: '4px' }}>
-            Click any legend's badge below to inspect or remix their builder pass!
+            Click any legend's badge to load their pass into the editor and remix it!
           </p>
         </div>
 
@@ -39,64 +53,110 @@ export const HypeWall: React.FC<HypeWallProps> = ({ onSelectPreset }) => {
         </div>
       </div>
 
-      {/* Builder Cards Showcase Grid */}
-      <div className="grid grid-cols-1 md-grid-cols-3 gap-6">
+      {/* Builder Card Grid — actual themed card previews */}
+      <div className="grid grid-cols-1 md-grid-cols-2 gap-8" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
         {PRESET_BUILDERS.map((preset, idx) => (
           <div
             key={idx}
             onClick={() => onSelectPreset(preset)}
-            className="glass-panel p-5 border border-white-10 rounded-2xl cursor-pointer flex flex-col justify-between"
+            style={{
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px',
+              position: 'relative',
+            }}
           >
-            <div>
-              {/* Header Badge */}
-              <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-                <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-black-30 text-yellow border border-yellow-glow">
-                  {preset.builderId}
-                </span>
-                <span className="text-xs font-semibold text-white-50 flex items-center gap-1">
-                  <span>Remix</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
+            {/* Scaled-down card preview */}
+            <div
+              style={{
+                width: '270px',
+                height: '420px',
+                overflow: 'hidden',
+                borderRadius: '16px',
+                position: 'relative',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+                transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease',
+                flexShrink: 0,
+              }}
+              className="hype-card-hover"
+            >
+              {/* Scale container — card is 540px wide, we want 270px display = scale 0.5 */}
+              <div style={{
+                width: '540px',
+                transformOrigin: 'top left',
+                transform: 'scale(0.5)',
+                pointerEvents: 'none',
+                userSelect: 'none',
+              }}>
+                <TemplateCard data={preset} />
               </div>
 
-              {/* Profile Image & Title */}
-              <div className="flex items-center gap-4" style={{ marginBottom: '16px' }}>
-                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-yellow p-1 bg-green-dark">
-                  <img src={preset.avatarUrl} alt={preset.name} className="w-full h-full object-cover rounded-full" />
+              {/* Hover overlay with "Remix" CTA */}
+              <div
+                className="hype-card-overlay"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, rgba(1,30,16,0.92) 0%, transparent 50%)',
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  justifyContent: 'center',
+                  paddingBottom: '20px',
+                  opacity: 0,
+                  transition: 'opacity 0.25s ease',
+                  borderRadius: '16px',
+                }}
+              >
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  backgroundColor: '#FFE500',
+                  color: '#0B1D14',
+                  fontWeight: 900,
+                  fontSize: '13px',
+                  fontFamily: "'Outfit', sans-serif",
+                  padding: '10px 20px',
+                  borderRadius: '24px',
+                  boxShadow: '0 4px 20px rgba(255,229,0,0.4)',
+                }}>
+                  <span>Remix this Badge</span>
+                  <ArrowRight style={{ width: '16px', height: '16px' }} />
                 </div>
-                <div>
-                  <h3 className="text-lg font-black text-white">
-                    {preset.name}
-                  </h3>
-                  <div className="text-xs font-semibold text-pink">{preset.builderClass}</div>
-                  <div className="text-xs text-white-60">{preset.role}</div>
-                </div>
-              </div>
-
-              {/* Shipping Status */}
-              <div className="bg-black-30 p-3 rounded-xl border border-white-10" style={{ marginBottom: '12px' }}>
-                <div className="text-xs font-mono text-white-40" style={{ marginBottom: '2px' }}>CURRENTLY SHIPPING</div>
-                <div className="text-xs font-bold text-white">🚀 {preset.shipping}</div>
-              </div>
-
-              {/* Beach Bag Tags */}
-              <div className="flex gap-1-5">
-                {preset.beachBag.map((item, bIdx) => (
-                  <span key={bIdx} className="text-xs bg-white-5 px-2 py-1 rounded-md text-white-80 border border-white-10">
-                    {item.icon} {item.label}
-                  </span>
-                ))}
               </div>
             </div>
 
-            {/* Template Tag */}
-            <div className="flex items-center justify-between text-xs text-white-40" style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-              <span>Template: <strong className="text-white" style={{ textTransform: 'capitalize' }}>{preset.template}</strong></span>
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            {/* Builder name tag below card */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontWeight: 900, fontSize: '1rem', color: '#FFFFFF', fontFamily: "'Outfit', sans-serif" }}>
+                {preset.name}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '1px' }}>
+                {preset.title} · {preset.builderId}
+              </div>
             </div>
           </div>
         ))}
       </div>
+
+      <style>{`
+        .hype-card-hover {
+          transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
+        }
+        .hype-card-hover:hover {
+          transform: translateY(-6px) scale(1.02);
+          box-shadow: 0 30px 70px rgba(0,0,0,0.65), 0 0 30px rgba(255,229,0,0.12);
+        }
+        .hype-card-hover .hype-card-overlay {
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+        .hype-card-hover:hover .hype-card-overlay {
+          opacity: 1;
+        }
+      `}</style>
     </section>
   );
 };
