@@ -6,7 +6,7 @@ import { HypeWall } from './components/HypeWall';
 import { DEFAULT_BADGE, BUILDER_CLASSES, ROLES, BEACH_ITEMS_PRESETS } from './constants/presets';
 import type { BuilderBadgeData, CardTemplate } from './types';
 import { exportCardAsPng, shareCardToX } from './utils/exportCard';
-import { Terminal, Rocket, Palmtree, Heart, TrainFront, Ticket, MapPinned } from 'lucide-react';
+import { Terminal, Rocket, Palmtree, TrainFront, Ticket, MapPinned } from 'lucide-react';
 
 export function App() {
   const [badgeData, setBadgeData] = useState<BuilderBadgeData>(DEFAULT_BADGE);

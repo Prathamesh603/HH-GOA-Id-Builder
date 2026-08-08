@@ -33,17 +33,17 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
   cardRef,
   isExporting,
 }) => {
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const [glareOpacity, setGlareOpacity] = useState(0);
   const [isTiltEnabled, setIsTiltEnabled] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardInnerRef = useRef<HTMLDivElement>(null);
 
   const [isAnimatingOpen, setIsAnimatingOpen] = useState(false);
   const [animationImage, setAnimationImage] = useState<string | null>(null);
   const [initialCardRect, setInitialCardRect] = useState<DOMRect | null>(null);
   const [isCapturingForAnimation, setIsCapturingForAnimation] = useState(false);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
 
   const handleAnimateClick = async () => {
     if (!cardRef.current) return;
@@ -76,15 +76,22 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    setRotateX(((y - centerY) / centerY) * -12);
-    setRotateY(((x - centerX) / centerX) * 12);
-    setGlareOpacity(0.35);
+    const newRotateX = ((y - centerY) / centerY) * -12;
+    const newRotateY = ((x - centerX) / centerX) * 12;
+    setRotateX(newRotateX);
+    setRotateY(newRotateY);
+    
+    if (cardInnerRef.current) {
+      cardInnerRef.current.style.transform = `rotateX(${newRotateX}deg) rotateY(${newRotateY}deg)`;
+    }
   };
 
   const handleMouseLeave = () => {
     setRotateX(0);
     setRotateY(0);
-    setGlareOpacity(0);
+    if (cardInnerRef.current) {
+      cardInnerRef.current.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    }
   };
 
   return (
@@ -165,7 +172,7 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
             inset: 0,
             borderRadius: '24px',
             pointerEvents: 'none',
-            opacity: glareOpacity,
+            opacity: isTiltEnabled ? 0.6 : 0,
             background: `radial-gradient(circle at ${50 + rotateY * 2}% ${50 - rotateX * 2}%, rgba(255,255,255,0.4) 0%, transparent 60%)`,
             mixBlendMode: 'overlay',
             transition: 'opacity 0.3s ease',

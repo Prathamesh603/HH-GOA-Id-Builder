@@ -20,7 +20,7 @@ interface Spark {
 
 export const AnimationOverlay: React.FC<AnimationOverlayProps> = ({
   cardImage,
-  initialRect,
+  initialRect: _initialRect,
   onClose,
   fileName,
 }) => {

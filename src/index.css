@@ -39,9 +39,9 @@ body {
 }
 
 .site-shell { position: relative; isolation: isolate; }
-.site-shell::before { content: ''; position: fixed; z-index: -1; inset: 0; opacity: .28; pointer-events: none; background-image: radial-gradient(rgba(255,255,255,.32) .7px, transparent .7px); background-size: 5px 5px; mix-blend-mode: soft-light; }
-.site-main { position: relative; will-change: scroll-position; }
-.site-main::before, .site-main::after { content: '🌴'; position: absolute; top: 120px; z-index: -1; color: rgba(213,255,190,.18); font-size: 14rem; filter: grayscale(1) sepia(1); transform: rotate(-10deg); }
+.site-shell::before { content: ''; position: fixed; z-index: -1; inset: 0; opacity: .04; pointer-events: none; background-image: radial-gradient(rgba(255,255,255,.32) .7px, transparent .7px); background-size: 5px 5px; }
+.site-main { position: relative; }
+.site-main::before, .site-main::after { content: '🌴'; position: absolute; top: 120px; z-index: -1; color: rgba(213,255,190,.08); font-size: 14rem; transform: rotate(-10deg); }
 .site-main::before { left: -120px; } .site-main::after { right: -110px; transform: scaleX(-1) rotate(-10deg); }
 
 /* Reduce motion for users who prefer it */
