@@ -5,8 +5,8 @@ import { EditorPanel } from './components/EditorPanel';
 import { HypeWall } from './components/HypeWall';
 import { DEFAULT_BADGE, BUILDER_CLASSES, ROLES, BEACH_ITEMS_PRESETS } from './constants/presets';
 import type { BuilderBadgeData, CardTemplate } from './types';
-import { exportCardAsPng } from './utils/exportCard';
-import { Sparkles, Terminal, Rocket, Palmtree, Heart } from 'lucide-react';
+import { exportCardAsPng, shareCardToX } from './utils/exportCard';
+import { Terminal, Rocket, Palmtree, Heart, TrainFront, Ticket, MapPinned } from 'lucide-react';
 
 export function App() {
   const [badgeData, setBadgeData] = useState<BuilderBadgeData>(DEFAULT_BADGE);
@@ -46,16 +46,17 @@ export function App() {
     setIsExporting(false);
   };
 
-  const handleShareToX = () => {
-    const text = encodeURIComponent(
+  const handleShareToX = async () => {
+    if (!cardRef.current) return;
+    const text =
       `Check out my official Hacker House Goa 2026 ID Badge! 🌴⚡\nBuilding in paradise this Oct 28-31.\n\nCreated with #FrameInGoa via @247pmstudio @hhgoa`
-    );
-    const url = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent('https://hhgoa.com')}`;
-    window.open(url, '_blank');
+    setIsExporting(true);
+    await shareCardToX(cardRef.current, badgeData.fullName || 'builder', text);
+    setIsExporting(false);
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans site-shell">
       {/* Navigation Bar */}
       <Navbar
         onScrollToEditor={() => editorRef.current?.scrollIntoView({ behavior: 'smooth' })}
@@ -63,35 +64,27 @@ export function App() {
       />
 
       {/* Main Content Stage */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md-px-8 py-8 flex flex-col items-center gap-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md-px-8 py-8 flex flex-col items-center gap-12 site-main">
         {/* Hero Banner Header */}
-        <section className="text-center max-w-3xl flex flex-col items-center gap-4 py-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-glow text-yellow text-xs font-bold font-mono tracking-wide animate-float">
-            <Sparkles className="w-3.5 h-3.5 text-pink" />
-            <span>OFFICIAL BADGE GENERATOR • HH GOA 2026</span>
+        <section className="station-hero">
+          <div className="hero-route hero-route-left"><TrainFront /> KONKAN EXPRESS <span>MAO → GOA</span></div>
+          <div className="hero-route hero-route-right"><Ticket /> PLATFORM 06 <span>OCT 28–31</span></div>
+          <div className="station-sign">
+            <span className="station-sign-top">HACKER HOUSE GOA • ARRIVALS</span>
+            <h1>HACKER <i>गोवा</i> HOUSE</h1>
+            <div className="station-sign-bottom"><MapPinned /> MADGAON JN. &nbsp;•&nbsp; BUILDERS ON BOARD</div>
           </div>
-
-          <h1 className="text-4xl md-text-6xl font-black text-white">
-            Build in Paradise. <br />
-            <span className="text-gradient">
-              Frame Your Legend.
-            </span>
-          </h1>
-
-          <p className="text-base md-text-lg text-white-70 max-w-2xl">
-            Customize and export your high-resolution Hacker House Goa 2026 ID Pass.
-            Designed with big-tech aesthetic precision, retro-tropical nostalgia, and live 3D physics.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-6 text-xs text-white-50 font-mono mt-2">
-            <span className="flex items-center gap-1-5"><Terminal className="w-4 h-4 text-yellow" /> Terminal Wizards</span>
-            <span className="flex items-center gap-1-5"><Rocket className="w-4 h-4 text-pink" /> AI Sorcerers</span>
-            <span className="flex items-center gap-1-5"><Palmtree className="w-4 h-4 text-emerald-400" /> Goa Hackers</span>
+          <p className="station-subtitle">Build in paradise, board the Konkan Express, and frame the legend you’re bringing to Goa.</p>
+          <div className="hero-tickets">
+            <div className="hero-ticket"><Terminal /> TERMINAL WIZARDS</div>
+            <div className="hero-ticket pink"><Rocket /> AI SORCERERS</div>
+            <div className="hero-ticket"><Palmtree /> GOA HACKERS</div>
           </div>
+          <div className="station-track" aria-hidden="true"><span /><span /><span /></div>
         </section>
 
         {/* Studio Workspace: Left Editor Controls | Right 3D Badge Preview */}
-        <section ref={editorRef} className="w-full flex flex-col lg-flex-row items-center lg-items-start justify-center gap-10 py-6">
+        <section ref={editorRef} className="w-full flex flex-col lg-flex-row items-center lg-items-start justify-center gap-10 py-6 studio-platform">
           {/* Left Column: Editor Controls */}
           <div className="w-full lg-w-half flex justify-center">
             <EditorPanel

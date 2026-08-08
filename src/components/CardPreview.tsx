@@ -19,7 +19,7 @@ const TEMPLATES: { id: CardTemplate; emoji: string; label: string; activeColor: 
   { id: 'retro', emoji: '🏷️', label: 'Retro Stamp', activeColor: '#FFE500', activeTextColor: '#0B1D14' },
   { id: 'train', emoji: '🚂', label: 'Konkan Express', activeColor: '#991B1B', activeTextColor: '#FEF08A' },
   { id: 'dark', emoji: '🌴', label: 'Dark Poster', activeColor: '#FF007A', activeTextColor: '#FFFFFF' },
-  { id: 'glass', emoji: '✨', label: 'Tech Glass', activeColor: '#00FFCC', activeTextColor: '#012b17' },
+  { id: 'glass', emoji: '🏴', label: 'One Piece Wanted', activeColor: '#E9C67C', activeTextColor: '#1E1713' },
 ];
 
 export const CardPreview: React.FC<CardPreviewProps> = ({
@@ -185,6 +185,7 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
         {/* Share button */}
         <button
           onClick={onShare}
+          disabled={isExporting}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -197,14 +198,15 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
             fontSize: '14px',
             fontFamily: 'Outfit, sans-serif',
             borderRadius: '12px',
-            cursor: 'pointer',
+            cursor: isExporting ? 'not-allowed' : 'pointer',
+            opacity: isExporting ? 0.7 : 1,
             border: '2px solid #FF007A',
             boxShadow: '0 4px 16px rgba(255,0,122,0.4)',
             transition: 'all 0.2s ease',
           }}
         >
           <Share2 style={{ width: '18px', height: '18px' }} />
-          <span>Share #FrameInGoa</span>
+          <span>{isExporting ? 'Preparing card...' : 'Share Card to X'}</span>
         </button>
 
         {/* 3D Tilt toggle button */}

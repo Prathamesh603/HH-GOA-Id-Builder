@@ -54,7 +54,7 @@ export const DEFAULT_BADGE: BuilderBadgeData = {
   avatarOffsetX: 0,
   avatarOffsetY: 0,
   avatarFilter: 'normal',
-  template: 'retro',
+  template: 'glass',
   accentColor: '#FF007A',
 };
 
