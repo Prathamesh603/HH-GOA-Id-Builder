@@ -4,6 +4,7 @@ import { RetroBadgeTemplate } from './Templates/RetroBadgeTemplate';
 import { DarkPosterTemplate } from './Templates/DarkPosterTemplate';
 import { GlassPassTemplate } from './Templates/GlassPassTemplate';
 import { TrainExpressTemplate } from './Templates/TrainExpressTemplate';
+import { PfpFrameTemplate } from './Templates/PfpFrameTemplate';
 import type { BuilderBadgeData, CardTemplate } from '../types';
 import { Sparkles, Download, Share2, Film } from 'lucide-react';
 import { toPng } from 'html-to-image';
@@ -19,6 +20,7 @@ interface CardPreviewProps {
 }
 
 const TEMPLATES: { id: CardTemplate; emoji: string; label: string; activeColor: string; activeTextColor: string; }[] = [
+  { id: 'pfp', emoji: '🖼️', label: 'PFP Frame', activeColor: '#00FFCC', activeTextColor: '#012b17' },
   { id: 'retro', emoji: '🏷️', label: 'Retro Stamp', activeColor: '#FFE500', activeTextColor: '#0B1D14' },
   { id: 'train', emoji: '🚂', label: 'Konkan Express', activeColor: '#991B1B', activeTextColor: '#FEF08A' },
   { id: 'dark', emoji: '🌴', label: 'Dark Poster', activeColor: '#FF007A', activeTextColor: '#FFFFFF' },
@@ -161,6 +163,7 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
             willChange: 'transform',
           }}
         >
+          {data.template === 'pfp' && <PfpFrameTemplate data={data} cardRef={cardRef} />}
           {data.template === 'retro' && <RetroBadgeTemplate data={data} cardRef={cardRef} />}
           {data.template === 'train' && <TrainExpressTemplate data={data} cardRef={cardRef} />}
           {data.template === 'dark' && <DarkPosterTemplate data={data} cardRef={cardRef} />}

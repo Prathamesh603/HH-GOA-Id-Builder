@@ -42,8 +42,26 @@ export const shareCardToX = async (cardElement: HTMLElement, fileName: string, p
   try {
     const dataUrl = await renderCardAsPng(cardElement);
     
-    // Directly download the card and open X/Twitter compose page
+    // Download the card
     downloadDataUrl(dataUrl, fileName);
+
+    // Copy to clipboard for instant pasting on X
+    try {
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'image/png': blob
+          })
+        ]);
+        console.log('Card copied to clipboard! You can paste it directly into your X post.');
+      }
+    } catch (clipErr) {
+      console.warn('Could not copy card to clipboard:', clipErr);
+    }
+    
+    // Open X/Twitter compose page
     window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(postText)}`, '_blank', 'noopener,noreferrer');
 
     confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#FFE500', '#FF007A', '#036737', '#FFFFFF'] });

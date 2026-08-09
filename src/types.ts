@@ -1,4 +1,4 @@
-export type CardTemplate = 'retro' | 'dark' | 'glass' | 'train';
+export type CardTemplate = 'retro' | 'dark' | 'glass' | 'train' | 'pfp';
 
 export type PhotoFilter = 'normal' | 'vintage' | 'emerald' | 'noir' | 'sepia';
 

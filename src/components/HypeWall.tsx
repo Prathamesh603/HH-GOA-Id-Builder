@@ -6,6 +6,7 @@ import { RetroBadgeTemplate } from './Templates/RetroBadgeTemplate';
 import { DarkPosterTemplate } from './Templates/DarkPosterTemplate';
 import { GlassPassTemplate } from './Templates/GlassPassTemplate';
 import { TrainExpressTemplate } from './Templates/TrainExpressTemplate';
+import { PfpFrameTemplate } from './Templates/PfpFrameTemplate';
 
 interface HypeWallProps {
   onSelectPreset: (presetData: BuilderBadgeData) => void;
@@ -13,6 +14,7 @@ interface HypeWallProps {
 
 function TemplateCard({ data }: { data: BuilderBadgeData }) {
   switch (data.template) {
+    case 'pfp':   return <PfpFrameTemplate data={data} />;
     case 'glass': return <GlassPassTemplate data={data} />;
     case 'train': return <TrainExpressTemplate data={data} />;
     case 'retro': return <RetroBadgeTemplate data={data} />;

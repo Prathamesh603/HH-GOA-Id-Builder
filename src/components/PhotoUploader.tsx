@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import type { BuilderBadgeData, PhotoFilter } from '../types';
 import { Upload, Image as ImageIcon, Sliders, RefreshCw, ZoomIn, Move } from 'lucide-react';
 
@@ -24,22 +24,61 @@ const FILTERS: { id: PhotoFilter; label: string }[] = [
 
 export const PhotoUploader: React.FC<PhotoUploaderProps> = ({ data, onChange }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isConverting, setIsConverting] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          onChange({
-            avatarUrl: event.target.result as string,
-            avatarScale: 1,
-            avatarOffsetX: 0,
-            avatarOffsetY: 0,
+      const isHeic = file.name.toLowerCase().endsWith('.heic') || 
+                     file.name.toLowerCase().endsWith('.heif') ||
+                     file.type === 'image/heic' || 
+                     file.type === 'image/heif';
+
+      if (isHeic) {
+        setIsConverting(true);
+        try {
+          // Dynamic import of heic2any for speed optimization
+          const heic2any = (await import('heic2any')).default;
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.85
           });
+          
+          const blobToRead = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            if (event.target?.result) {
+              onChange({
+                avatarUrl: event.target.result as string,
+                avatarScale: 1,
+                avatarOffsetX: 0,
+                avatarOffsetY: 0,
+              });
+            }
+            setIsConverting(false);
+          };
+          reader.readAsDataURL(blobToRead);
+        } catch (err) {
+          console.error('HEIC conversion failed:', err);
+          alert('Failed to convert HEIC image. Please upload a standard JPG/PNG or try another image.');
+          setIsConverting(false);
         }
-      };
-      reader.readAsDataURL(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            onChange({
+              avatarUrl: event.target.result as string,
+              avatarScale: 1,
+              avatarOffsetX: 0,
+              avatarOffsetY: 0,
+            });
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -47,21 +86,35 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({ data, onChange }) 
     <div className="flex flex-col gap-5">
       {/* Upload Drop Zone */}
       <div
-        onClick={() => fileInputRef.current?.click()}
-        className="flex flex-col items-center justify-center p-6 border border-dashed border-white-20 rounded-2xl cursor-pointer bg-black-20"
+        onClick={() => !isConverting && fileInputRef.current?.click()}
+        className="flex flex-col items-center justify-center p-6 border border-dashed border-white-20 rounded-2xl bg-black-20"
+        style={{
+          opacity: isConverting ? 0.7 : 1,
+          cursor: isConverting ? 'wait' : 'pointer',
+          borderColor: isConverting ? '#00FFCC' : undefined,
+        }}
       >
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,.heic,.heif"
           style={{ display: 'none' }}
           onChange={handleFileChange}
+          disabled={isConverting}
         />
         <div className="w-12 h-12 rounded-full flex items-center justify-center text-yellow" style={{ backgroundColor: 'rgba(255, 229, 0, 0.1)', marginBottom: '12px' }}>
-          <Upload className="w-6 h-6" />
+          {isConverting ? (
+            <RefreshCw className="w-6 h-6 animate-spin-uploader" />
+          ) : (
+            <Upload className="w-6 h-6" />
+          )}
         </div>
-        <div className="text-sm font-semibold text-white">Click to Upload Avatar Photo</div>
-        <div className="text-xs text-white-50" style={{ marginTop: '4px' }}>PNG, JPG or WEBP up to 10MB</div>
+        <div className="text-sm font-semibold text-white">
+          {isConverting ? 'Converting HEIC Photo...' : 'Click to Upload Avatar Photo'}
+        </div>
+        <div className="text-xs text-white-50" style={{ marginTop: '4px' }}>
+          {isConverting ? 'Please wait, rendering iPhone HEIC format...' : 'PNG, JPG, WEBP or HEIC (iPhone) up to 10MB'}
+        </div>
       </div>
 
       {/* Preset Avatars Bar */}
@@ -194,6 +247,15 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({ data, onChange }) 
           </div>
         </div>
       </div>
+      <style>{`
+        @keyframes spin-uploader {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-uploader {
+          animation: spin-uploader 1.2s linear infinite;
+        }
+      `}</style>
     </div>
   );
 };
